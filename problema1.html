@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ingreso de datos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['Year', 'Sales', 'Expenses'],
+        ['2013',  1000,      400],
+        ['2014',  1170,      460],
+        ['2015',  660,       1120],
+        ['2016',  1030,      540]
+      ]);
+
+      var options = {
+        title: 'Company Performance',
+        hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+        vAxis: {minValue: 0}
+      };
+
+      var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+  </script>
+</head>
+<body>
+<div id="demo">
+<h2 style="text-align: center;">Ingreso de region:</h2>
+<button type="button" onclick="loadDoc()">comparar!!</button>
+</div>
+<script>
+function loadDoc() {
+  var region1 = prompt("ingrese region 1: ");
+  var region2 = prompt("ingrese region 2: ");
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var data = JSON.parse(this.responseText);
+      var html = '<table style="width:100%">\n';
+      for(i in data){
+        if(data[i].region == region1){
+          var name1= data[i].region;
+          var confirmados1 = data[i].confirmed;
+          for(j in confirmados1){
+          var value1 = Number(confirmados1[j].value);
+          }
+        }
+        if(data[i].region == region2){
+          var name2= data[i].region;
+          var confirmados2 = data[i].confirmed;
+          for(k in confirmados2){
+          var value2 = Number(confirmados2[k].value);
+          }
+        }
+      }
+      html += '<tr>\n';
+      html += '<th>' + name1 + "   :   " + value1 + " confirmados " + '</th>\n';
+      html += '<th>' + name2 + "   :   " + value2 + " confirmados " + '</th>\n';
+      html += '</tr>\n';
+    }
+    html += '</table>\n';
+      document.getElementById("demo").innerHTML = html;
+  };
+  xhttp.open("GET", "data.json", true);
+  xhttp.send();
+}
+</script>
+<div id="chart_div" style="width: 100%; height: 500px;"></div>
+</body>
+</html>
