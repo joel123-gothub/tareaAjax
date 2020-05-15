@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type = "text/javascript" src = "https://www.gstatic.com/charts/loader.js"></script> 
+    <script type = "text/javascript"> 
+      var xhttp = new XMLHttpRequest();
+      names = new Array(); //array que almacenara los nombres de regiones
+      regiones = []; //array bidimensinal
+      dato = []; //arreglo cambiante
+      xhttp.onreadystatechange = function() {
+        if ( this.readyState == 4 && this.status == 200 ) { //verificion
+            var data = JSON.parse(this.responseText);
+            for(i in data){
+                 if(data[i].region != "Lima" && data[i].region != "Callao"){
+                     var r = data[i].region;
+                     names.push(r);   // agregara la region al arreglo
+                     var c = data[i].confirmed;
+                     dato = [];   //se actualiza cada vez: reutilizable
+                     for(j in c){
+                        var cfd = Number(c[j].value);   //conversion a de string a int
+                        dato.push(cfd);   //los datos se van almacenando de 1 region en el arreglo
+                     }
+                    regiones.push(dato);  // agrega el arreglo de datos en el arreglo general
+                 }
+          }
+        }
+      };
+      xhttp.open( "GET", "data.json", true );
+      xhttp.send();
+      google.charts.load( 'current', { 'packages' : [ 'corechart' ] } );   
+      google.charts.setOnLoadCallback( drawChart );
+      function drawChart() {
+         var table = new google.visualization.DataTable();
+       
+         table.addColumn('number', 'dias');
+         for (i in names){ //son 23 regiones 
+             table.addColumn('number', names[i]);  //se va agregando cada region a las columnas
+         }
+         for (var n = 0 ; n < 65 ; n++) {   //son 65 datos y dias que existen en cada region
+           table.addRows([       //se va agregando los 24 datos de cada dia durante 65 dias
+           [(n+1), regiones[0][n], regiones[1][n], regiones[2][n],
+            regiones[3][n], regiones[4][n], regiones[5][n], 
+            regiones[6][n], regiones[7][n], regiones[8][n], 
+            regiones[9][n], regiones[10][n], regiones[11][n], 
+            regiones[12][n], regiones[13][n], regiones[14][n], 
+            regiones[15][n], regiones[16][n], regiones[17][n], 
+            regiones[18][n], regiones[19][n], regiones[20][n], 
+            regiones[21][n], regiones[22][n]]
+           ]);
+         }
+      var options = {
+        hAxis: {
+          title: 'Dias'
+        },
+        vAxis: {
+          title: 'Confirmados'
+        },
+        colors: [ '#AB0D06', '#287258', '#06ab89', '#28ab06', '#a6a0a7', '#5b7d66',
+                  '#6d6b6d', '#7a041c', '#904848', '#ab0628', '#c4072e', '#dc0834',
+                  '#f50939', '#624e9e', '#8e4a8e', '#067bab', '#0628ab', '#725828',
+                  '#284272', '#723328', '#677228', '#332872', '#286772'], // colores de cada region
+      };
+      var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+      chart.draw(table, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id = 'chart_div'></div>
+  </body>
+</html>
