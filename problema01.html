@@ -4,43 +4,42 @@
     <script type = "text/javascript" src = "https://www.gstatic.com/charts/loader.js"></script>
     <script type = "text/javascript"> 
       var xhttp = new XMLHttpRequest();
-      var fechas = new Array();
-      var values1 = new Array();
-      var values2 = new Array();
-      var region1 = prompt("ingrese region 1: ");
-      var region2 = prompt("ingrese region 2: ");
+      var values1 = new Array(); //almacena valores de confirmados region 1
+      var values2 = new Array(); // almacena valores de confirmados region 2
+      var region1 = prompt("ingrese region 1: "); //ingreso de nombre region1
+      var region2 = prompt("ingrese region 2: "); //ingreso de nombre region2
       xhttp.onreadystatechange = function() {
-        if ( this.readyState == 4 && this.status == 200 ) { 
+        if ( this.readyState == 4 && this.status == 200 ) {  //verificacion
             var data = JSON.parse(this.responseText);
-            for(i in data){
-                 if(data[i].region == region1){
-                 var confirmados1 = data[i].confirmed;
-                     for(j in confirmados1){
-                     values1[j] = Number(confirmados1[j].value);
+            for(i in data){ // busqueda
+                 if(data[i].region == region1){ //verificacion de coincidir con la region ingresada
+                 var confirmados1 = data[i].confirmed; // almacenamiento de arreglo de confirmados de region1
+                     for(j in confirmados1){ //iteracion 
+                     values1[j] = Number(confirmados1[j].value); //conversion y almacenamiento de valores
                      }
                  }
                  if(data[i].region == region2){
-                     var confirmados2 = data[i].confirmed;
-                     for(k in confirmados2){
-                         values2[k] = Number(confirmados2[k].value);
+                     var confirmados2 = data[i].confirmed;// almacenamiento de arreglo de confirmados de region2
+                     for(k in confirmados2){//iteracion 
+                         values2[k] = Number(confirmados2[k].value);//conversion y almacenamiento de valores
                      }
                  }
              }
         }
       };
       xhttp.open( "GET", "data.json", true );
-      xhttp.send();
+      xhttp.send(); //cierre de consulta
       google.charts.load( 'current', { 'packages' : [ 'corechart' ] } );   
       google.charts.setOnLoadCallback( drawChart );
       function drawChart() {
          var table = new google.visualization.DataTable();
-         table.addColumn('number', 'dias'),
+         table.addColumn('number', 'dias'), //agregamiento de dias de tipo number
          table.addColumn('number', region1);
          table.addColumn('number', region2);
-         for (var n = 0 ; n <= 65 ; n++) {
+         for (var n = 0 ; n <= 65 ; n++) { //iteracion de 65 datos existentes en cada region
            table.addRows([
-           [n, values1[n], values2[n]],
-           ]);
+           [n, values1[n], values2[n]], //agregamiento de datos a la grafica
+           ]); // n : dias...
          }
       var options = {
         hAxis: {
@@ -49,7 +48,7 @@
         vAxis: {
           title: 'Confirmados'
         },
-        colors: ['#AB0D06', '#007329'],
+        colors: ['#AB0D06', '#007329'], //colores de lineas crecientes de regiones
       };
       var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
       chart.draw(table, options);
